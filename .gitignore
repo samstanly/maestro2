@@ -1,0 +1,3 @@
+/vendor
+/composer.lock
+/core/conf/conf.php
