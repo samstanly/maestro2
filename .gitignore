@@ -1,3 +1,8 @@
-/vendor
-/composer.lock
-/core/conf/conf.php
+vendor
+composer.lock
+
+#Don't show apps as Maestro changes
+apps/*
+
+#Unless it's a default app
+!apps/{auth exemplos guia template wizard}
