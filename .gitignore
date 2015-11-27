@@ -6,4 +6,8 @@ core/var/templates/*
 apps/*
 
 #Unless it's a default app
-!apps/{auth exemplos guia template wizard}
+!apps/auth
+!apps/exemplos
+!apps/wizard
+!apps/template
+!apps/guia

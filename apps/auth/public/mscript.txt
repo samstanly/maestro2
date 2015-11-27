@@ -1,0 +1,24 @@
+[globals]
+database = "$database"
+app = "auth"
+module = ""
+
+[User]
+table = "user"
+log = user
+description = login
+attributes['id'] = "id,integer,,primary,seq_id_user"
+attributes['login'] = "login,string,not null" 
+attributes['email'] = "email,string,not null"
+attributes['passwordSalt'] = "password_salt,string,not null"
+attributes['password'] = "password,string,not null"
+associations['roles'] = "\auth\models\role,manyToMany,user_role"
+
+[Role]
+table = "role"
+log = role
+description = name
+attributes['id'] = "id,integer,,primary,seq_id_role"
+attributes['name'] = "name,string,not null" 
+attributes['description'] = "description,string,not null" 
+associations['users'] = "\auth\models\user,manyToMany,user_role"

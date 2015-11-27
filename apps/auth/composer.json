@@ -1,0 +1,9 @@
+{
+  "name": "Auth",
+  "description": "",
+  "autoload": {
+    "psr-4": {
+      "auth\\": ""
+    }
+  }
+}
