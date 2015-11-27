@@ -1,0 +1,94 @@
+package jmaestrotrace;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class SelectTabsDialog extends JDialog{
+	
+	private JPanel parent;
+	private Dimension dialogDimension = new Dimension(250,320);
+	private String tabChoice;
+	private JCheckBox[] checkBox;
+	private Frame frame;
+	
+	public SelectTabsDialog(Frame aFrame) {
+        super(aFrame, true);
+        frame = aFrame;
+        setTitle("Selecione as Tabs");
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();		
+		int x = (screen.width / 2) - (dialogDimension.width / 2);
+		int y = (screen.height / 2) - (dialogDimension.height / 2);
+		setBounds(x,y,dialogDimension.width,dialogDimension.height);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
+        
+        JPanel choicePanel = new JPanel();
+        choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.PAGE_AXIS));
+        Preferences p = new Preferences();
+        LinkedHashMap<String,String> tabs = p.getTabs();
+        checkBox = new JCheckBox[tabs.size()];
+        int i = 0;
+        for(String tab : tabs.keySet()){
+        	checkBox[i] = new JCheckBox(tab);        	
+        	if(tab.equals("Todas") || tab.equals("Busca")){        		
+        		checkBox[i].setSelected(true);
+        		checkBox[i].setEnabled(false);
+        	}
+        	if(tabs.get(tab).equals("1")){
+        		checkBox[i].setSelected(true);
+        	}
+        	choicePanel.add(checkBox[i]);
+        	i++;        	
+        }
+        JButton btnOk = new JButton("Ok");
+        btnOk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				btnOkListener(evt);
+			}
+		});
+        JButton btnCancel = new JButton("Cancelar");
+        btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				close();
+			}
+		});        
+        JPanel btnPanel = new JPanel();
+        btnPanel.setLayout(new FlowLayout());
+        btnPanel.add(btnOk);        
+        btnPanel.add(btnCancel);
+        JScrollPane scrollPanel = new JScrollPane();
+        scrollPanel.setViewportView(choicePanel);
+        add(scrollPanel,BorderLayout.CENTER);
+        add(btnPanel,BorderLayout.SOUTH);        
+	}
+	
+	private void btnOkListener(ActionEvent evt) {
+		String tabs = "";
+		for(JCheckBox b : checkBox){
+			if(b.isSelected()){
+				tabs = tabs + b.getText() + ",";
+			}
+		}
+		String[] result = tabs.split(Pattern.quote(","));
+		Preferences p = new Preferences();
+		p.setChoiceTabs(result);				
+	}
+	
+	private void close(){
+		setVisible(false);
+	}
+
+}

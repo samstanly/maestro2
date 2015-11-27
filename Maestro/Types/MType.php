@@ -17,18 +17,21 @@
  */
 namespace Maestro\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use Maestro\Manager;
+use Nette\NotImplementedException;
 
 abstract class MType
 {
     const MCPF = 'mcpf';
-    const MTYPE = 'mtype';
+    const MPASSWORD = 'mpassword';
     /**
      * @var array Maestro default Types mappings
      */
     private static $_MaestroTypesMap = array(
-        self::MCPF => 'Maestro\Types\MCPFType'
+        self::MCPF => 'Maestro\Types\MCPF',
+        self::MPASSWORD => 'Maestro\Types\MPassword'
     );
 
     /**
@@ -46,7 +49,25 @@ abstract class MType
         }
         return Type::getType($name);
     }
-}
 
-?>
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        throw new NotImplementedException();
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        throw new NotImplementedException();
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        throw new NotImplementedException();
+    }
+
+    public function getName()
+    {
+        throw new NotImplementedException();
+    }
+}
 

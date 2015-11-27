@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <fields>
+         <mhiddenfield id="User::id" />        
+<mtextfield id="User::login" label="Login" />        
+<mtextfield id="User::email" label="Email" />        
+<mtextfield id="User::passwordSalt" label="PasswordSalt" />        
+<mtextfield id="User::password" label="Password" />
+    </fields>
+    <buttons>
+        <mbutton id="btnPost" text="Enviar" action="$this->data->action"/>
+    </buttons>
+    <validators>
+    </validators>
+</view>

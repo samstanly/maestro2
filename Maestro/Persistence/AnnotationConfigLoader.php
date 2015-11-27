@@ -18,10 +18,16 @@
 
 namespace Maestro\Persistence;
 
+use auth\models\map\UserMap;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Maestro;
 use ReflectionClass;
 
@@ -46,26 +52,13 @@ class AnnotationConfigLoader
         return array();
     }
 
+    /**
+     * @param $className
+     * @return array
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     */
     public function getMap($className)
     {
-        /*
-         * array(
-            'class' => \get_called_class(),
-            'database' => 'kancolle',
-            'table' => '"user"',
-            'attributes' => array(
-                'id' => array('column' => 'id','key' => 'primary','idgenerator' => 'seq_user_id','type' => 'integer'),
-                'login' => array('column' => 'login'),
-                'email' => array('column' => 'email'),
-                'passwordSalt' => array('column' => 'password_salt','type' => 'string'),
-                'password' => array('column' => 'password','type' => 'string'),
-            ),
-            'associations' => array(
-                'roles' => array('toClass' => '\auth\models\role', 'cardinality' => 'manyToMany' , 'associative' => 'user_role'),
-            )
-        );
-         */
-
         $p = strrpos($className, '\\');
         if ($p === false) {
             return;
@@ -74,46 +67,60 @@ class AnnotationConfigLoader
             //$classNameMap = substr($className, 0, $p) . "\\map" . substr($className, $p) . 'map';
             //mdump('-----------------'.$classNameMap);
             AnnotationRegistry::registerFile("/home/master/html/maestro2/vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
-            AnnotationRegistry::registerFile("/home/master/html/maestro2/Maestro/Persistence/Annotation/Association.php");
-            AnnotationRegistry::registerFile("/home/master/html/maestro2/Maestro/Persistence/Annotation/Map.php");
+            AnnotationRegistry::registerAutoloadNamespace('Maestro\Persistence\Annotation', Maestro\Manager::getHome());
+            //AnnotationRegistry::registerAutoloadNamespace("Maestro\Persistence\Annotation", Maestro\Manager::getHome());
 
             $reader = new AnnotationReader();
             $reflClass = new ReflectionClass(get_parent_class($className));
             $classAnnotations = $reader->getClassAnnotations($reflClass);
             $attributesAnnotations = [];
-            foreach($reflClass->getProperties() as $reflectionProperty){
+            foreach ($reflClass->getProperties() as $reflectionProperty) {
                 $attributesAnnotations[$reflectionProperty->name] = $reader->getPropertyAnnotations($reflectionProperty);
             }
             $map = array();
             $map['class'] = $className;
             $map['database'] = $classAnnotations[0]->database;
-            $map['table'] = str_replace('`','"',$classAnnotations[0]->table); //Temp postgres fix
+            $map['table'] = str_replace('`', '"', $classAnnotations[0]->table); //Temp postgres fix
             $map['attributes'] = $map['associations'] = [];
-            foreach($attributesAnnotations as $attrName=>$annotations){
+            foreach ($attributesAnnotations as $attrName => $annotations) {
                 $column = $association = [];
-                foreach($annotations as $annotation){
-                    if ($annotation instanceof Maestro\Persistence\Annotation\Association){
-                        $association['cardinality'] = $annotation->cardinality;
-                        $association['toClass'] = $annotation->toClass;
-                        if($annotation instanceof Maestro\Persistence\Annotation\ManyToMany){
-                            $association['associative'] = $annotation->associative;
-                        }elseif($annotation instanceof Maestro\Persistence\Annotation\OneToMany){
-                            $association['keys'] = "{$annotation->foreignKey}:{$annotation->refersTo}";
-                        }
-                        $map['associations'][$attrName] = $association;
-                    }
-                    else{
-                        if ($annotation instanceof Column){
+                foreach ($annotations as $annotation) {
+                    switch (true) {
+                        case $annotation instanceof ManyToMany:
+                            $association['cardinality'] = "manyToMany";
+                            $association['toClass'] = $annotation->targetEntity;
+                            break;
+                        case $annotation instanceof JoinTable:
+                            if ($annotation->name) {
+                                $association['associative'] = $annotation->name;
+                            } elseif ($annotation->joinColumns) {
+                                $joinColumn = $annotation->joinColumns[0];
+                                $association['keys'] = sprintf('%s:%s', $joinColumn->name, $joinColumn->referenceColumnName);
+                            }
+                            break;
+                        case $annotation instanceof Column:
                             $column['column'] = $annotation->name ?: $attrName;
                             $column['type'] = $annotation->type;
-                        }
-                        if($annotation instanceof Id){
+                            break;
+                        case $annotation instanceof Id:
                             $column['key'] = 'primary';
-                        }
-                        if($annotation instanceof Maestro\Persistence\Annotation\IdGenerator){
-                            $column['idgenerator'] = $annotation->sequence; //T
-                        }
+                            break;
+                        case $annotation instanceof GeneratedValue:
+                            $idgenerator = "identity";
+                            if($annotation->strategy == "SEQUENCE"){
+                                $shortName = end(explode('\\',$className));
+                                $idgenerator = sprintf("seq_%s_%s",strtolower($shortName),$column['column']); // Hm.....
+                            }
+                            $column['idgenerator'] = $idgenerator;
+                            break;
+                        case $annotation instanceof Maestro\Persistence\Annotation\Validator:
+                            $column['validators'] = get_object_vars($annotation);
+                            break;
+                    }
+                    if(!empty($column)){
                         $map['attributes'][$attrName] = $column;
+                    }elseif(!empty($association)){
+                        $map['associations'][$attrName] = $association;
                     }
                 }
             }
@@ -122,9 +129,33 @@ class AnnotationConfigLoader
         return $this->phpMaps[$className];
     }
 
-    public function getClassMap($className)
+    /**
+     * @param $meta ClassMetadataInfo
+     * @return array
+     */
+    /*
+    public function metaInfoToArray($meta,$className){
+        $map = [];
+        $map['attributes'] = $meta->fieldMappings;
+        foreach($map['attributes'] as $fieldName=>$attribute){
+            $map['attributes'][$fieldName]['column'] = $attribute['columnName'];
+            if($attribute['id']){
+                $map['attributes'][$fieldName]['key'] = 'primary';
+                if($meta->isIdGeneratorSequence()){
+                    $map['attributes'][$fieldName]['idgenerator'] = sprintf('seq_id_%s',strtolower($className));
+                }elseif($meta->isIdGeneratorIdentity()){
+                    $map['attributes'][$fieldName]['idgenerator'] = 'identity';
+                }
+            }
+        }
+    }*/
+
+    public
+    function getClassMap($className)
     {
-        if ($className == '') {mtracestack();}
+        if ($className == '') {
+            mtracestack();
+        }
         //$className = strtolower(trim($className));
         $classIndex = strtolower(trim($className));
         if ($className{0} == '\\') {
@@ -137,6 +168,7 @@ class AnnotationConfigLoader
             return $this->classMaps[$classIndex];
         }
         $map = $this->getMap($className);
+
         //var_dump($map);
         $database = $map['database'];
         $classMap = new \Maestro\Persistence\Map\ClassMap($className, $database);
@@ -164,9 +196,9 @@ class AnnotationConfigLoader
                 $attributeMap->setConverter($config['converters'][$attributeName]);
             }
 
-            $attributeMap->setColumnName($attr['column']? : $attributeName);
-            $attributeMap->setAlias($attr['alias']? : $attributeName);
-            $attributeMap->setKeyType($attr['key'] ? : 'none');
+            $attributeMap->setColumnName($attr['column'] ?: $attributeName);
+            $attributeMap->setAlias($attr['alias'] ?: $attributeName);
+            $attributeMap->setKeyType($attr['key'] ?: 'none');
             $attributeMap->setIdGenerator($attr['idgenerator']);
 
             if (($attr['key'] == 'reference') && ($classMap->getSuperClassMap() != NULL)) {

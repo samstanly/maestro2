@@ -284,7 +284,7 @@ class Manager extends Nette\Object
 
     /**
      * Cria (se não existe) e retorna a instância singleton da class Manager.
-     * @returns (object) Instance of Manager class
+     * @return Manager
      */
     public static function getInstance()
     {
@@ -316,7 +316,7 @@ class Manager extends Nette\Object
      */
     public static function init($configFile = '', $basePath = '', $app = '')
     {
-        $basePath = $basePath ?: dirname(dirname(__DIR__));
+        $basePath = $basePath ?: dirname(__DIR__);
         self::$basePath = $basePath;
         self::$appsPath = $basePath . DIRECTORY_SEPARATOR . 'apps';
         self::$coreAppsPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'apps';

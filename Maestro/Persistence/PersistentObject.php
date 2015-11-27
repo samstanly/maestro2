@@ -22,6 +22,7 @@ use Maestro,
     Maestro\Persistence\Map\AttributeMap as AttributeMap,
     Maestro\Persistence\Criteria\RetrieveCriteria as RetrieveCriteria;
 use Maestro\Manager;
+use Maestro\Persistence\Map\ClassMap;
 
 class PersistentObject
 {
@@ -38,7 +39,7 @@ class PersistentObject
     }
 
     /**
-     * @return Manager/Persistence/Map/ClassMap
+     * @return ClassMap
      */
     public function getClassMap()
     {

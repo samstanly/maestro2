@@ -52,7 +52,7 @@ return array(
         'enabled' => true,
         'severity' => E_ALL & ~E_WARNING & ~E_NOTICE & ~E_STRICT,
         'maxLen' => 500,
-        'maxDepth' => 4,
+        'maxDepth' => 5,
         'strictMode' => FALSE
     ),
     'login' => array(
@@ -72,9 +72,9 @@ return array(
         'path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'. DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log',
         'level' => 2, // 0 (nenhum), 1 (apenas erros) ou 2 (erros e SQL)
         'handler' => "socket",
-		'peer' => '127.0.0.1',
+		'peer' => '192.168.25.2',
         'strict' => '',
-        'port' => 0 //Default 9999
+        'port' => 9999 //Default 9999
     ),
     'mailer' => array(
         'smtpServer' => 'smtp.ufjf.br',
@@ -86,6 +86,7 @@ return array(
     'extensions' => array(
     ),
     'db' => array(
+        'configLoader' => 'PHP',
         'manager' => array(
             'driver' => 'pdo_pgsql',
             'host' => 'localhost',

@@ -29,7 +29,7 @@ use Maestro\Utils\MNull;
  * @version     1.0 
  * @since       1.0
  */
-class MCPFType extends MType {
+class MCPF extends MType {
     /**
      * Doctrine type extension
      */
@@ -41,12 +41,12 @@ class MCPFType extends MType {
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        return new MCPFType($value);
+        return new MCPF($value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return MCPFType::getPlainValue($value);
+        return MCPF::getPlainValue($value);
     }
 
     public function getName()
@@ -59,10 +59,10 @@ class MCPFType extends MType {
      * @var string
      */
     private $value;
-    /*
+
     public function __construct($value) {
         $this->setValue($value);
-    }*/
+    }
 
     public function getValue() {
         return $this->value ? : '';
@@ -72,16 +72,23 @@ class MCPFType extends MType {
 
     }
 
-    static public function validate($value) {        
-        return $value->isValid();
+    /**
+     * @param $mcpf MCPF
+     * @return bool
+     */
+    public function validate($mcpf) {
+        return $mcpf->isValid();
     }
 
+    /**
+     * @return bool
+     */
     public function isValid() {
         return $this->validateCPF();
     }
 
-    public static function format($value) {
-        return sprintf('%s.%s.%s-%s', substr($value, 0, 3), substr($value, 3, 3), substr($value, 6, 3), substr($value, 9, 2));
+    public function format() {
+        return sprintf('%s.%s.%s-%s', substr($this->value, 0, 3), substr($this->value, 3, 3), substr($this->value, 6, 3), substr($this->value, 9, 2));
     }
 
     public static function getPlainValue($value) {

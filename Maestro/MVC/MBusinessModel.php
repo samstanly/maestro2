@@ -20,6 +20,7 @@ namespace Maestro\MVC;
 use Maestro\Manager;
 use Maestro\Persistence\PersistentManager;
 use Maestro\Types\MType;
+use Maestro\Utils\MDataValidator;
 
 
 /**
@@ -377,7 +378,8 @@ class MBusinessModel extends \Maestro\Persistence\PersistentObject {
      * @param boolean $exception Indica se deve ser disparada uma exceção em caso de falha.
      */
     public function validate($exception = true) {
-        $validator = new \Maestro\Utils\MDataValidator();
+        $validator = new MDataValidator($this);
+        $validator->validate();
         //return $validator->validateModel($this, $exception);
         return true;
     }

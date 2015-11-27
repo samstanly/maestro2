@@ -16,7 +16,8 @@
  */
 
 namespace Maestro\Database;
-
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Statement;
 
 class MSQL {
 
@@ -24,6 +25,9 @@ class MSQL {
      * Attribute Description.
      */
     public $db;
+    /**
+     * @var AbstractPlatform
+     */
     public $platform;
 
     /**
@@ -97,7 +101,7 @@ class MSQL {
     public $setOperation;
 
     /**
-     * Attribute Description.
+     * @type Statement
      */
     public $stmt;
 
@@ -418,7 +422,6 @@ class MSQL {
         if ($this->setOperation != NULL) {
             $sqlText .= $this->_getSetOperation();
         }
-
         if ($this->range) {
             preg_match_all('/select/i', $sqlText, $matches);
             if (count($matches[0]) > 1) { // set operation
@@ -427,9 +430,8 @@ class MSQL {
                 $sqlText .= ' ' . $this->db->getPlatform()->getSQLRange($this->range);
             }
         }
-
         $this->command = $sqlText;
-
+        
         $this->prepare();
         $this->bind();
         return $this;

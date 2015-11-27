@@ -29,7 +29,7 @@ use Maestro\Utils\MNull;
  * @version     1.0 
  * @since       1.0
  */
-class MCPF extends MType {
+class MPassword extends MType {
     /**
      * Doctrine type extension
      */
@@ -41,17 +41,17 @@ class MCPF extends MType {
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        return new MCPF($value);
+        return $value;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return MCPF::getPlainValue($value);
+        return md5($value);
     }
 
     public function getName()
     {
-        return self::MCPF;
+        return self::MPassword;
     }
 
     /**

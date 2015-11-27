@@ -15,7 +15,7 @@ ini_set("error_log", $dir . "core/var/log/php_error.log");
 
 // Inclusão do framework
 $conf = $dir . '/core/conf/conf.php';
-require_once($dir . '/core/classes/Manager.php');
+require_once($dir . '/Maestro/Manager.php');
 \Maestro\Manager::getInstance();
 
 \Maestro\Manager::init($conf, $dir);

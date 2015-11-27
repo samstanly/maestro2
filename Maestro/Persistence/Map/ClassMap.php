@@ -292,6 +292,10 @@ class ClassMap {
         }
     }
 
+    /**
+     * @param $object
+     * @param $query Maestro\Database\MQuery
+     */
     public function retrieveObject($object, $query) {
         $index = 0;
         $classMap = $this;

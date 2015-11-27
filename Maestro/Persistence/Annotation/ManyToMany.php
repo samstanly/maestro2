@@ -9,7 +9,9 @@
 namespace Maestro\Persistence\Annotation;
 
 
-class ManyToMany
+/** @Annotation */
+class ManyToMany extends Association
 {
-
+    public $cardinality = "manyToMany";
+    public $associative;
 }

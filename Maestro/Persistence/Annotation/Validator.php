@@ -5,15 +5,20 @@ namespace Maestro\Persistence\Annotation;
 use Doctrine\ORM\Mapping\Annotation;
 
 /** @Annotation */
-class Association implements Annotation
+class Validator implements Annotation
 {
     /**
      * @var string
      */
-    public $toClass;
+    public $method;
     /**
      * @var string
      */
-    public $cardinality;
+    public $class;
+    /**
+     * @var array
+     */
+    public $rules;
+
 }
 

@@ -19,7 +19,7 @@ namespace Maestro\Persistence\Map;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Maestro;
 
-class AttributeMap {
+class AttributeMap{
 
     /**
      * @var Maestro\Persistence\Map\ClassMap

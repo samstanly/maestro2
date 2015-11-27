@@ -190,7 +190,7 @@ class PersistentManager {
     private function _retrieveAssociation(PersistentObject $object, $associationName, ClassMap $classMap) {
         $associationMap = $classMap->getAssociationMap($associationName);
         if (is_null($associationMap)) {
-            throw new EPersistentManagerException("Association name [{$associationName}] not found.");
+            throw new EPersistenceException("Association name [{$associationName}] not found.");
         }
         $this->__retrieveAssociation($object, $associationMap, $classMap);
     }
@@ -236,7 +236,7 @@ class PersistentManager {
      * Save Object
      *
      */
-    public function saveObject(PersistentObject $object) {
+    public function saveObject(Maestro\MVC\MBusinessModel $object) {
         $object->validate();
         $classMap = $object->getClassMap();
         $commands = array();

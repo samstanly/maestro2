@@ -9,7 +9,16 @@
 namespace Maestro\Persistence\Annotation;
 
 
-class OneToMany
+/** @Annotation */
+class OneToMany extends Association
 {
-
+    /**
+     * @var string
+     */
+    public $foreignKey;
+    /**
+     * @var string
+     */
+    public $refersTo;
+    public $cardinality = "oneToMany";
 }

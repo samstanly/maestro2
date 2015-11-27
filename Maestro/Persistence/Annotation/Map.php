@@ -18,9 +18,3 @@ class Map implements Annotation
     public $table;
 
 }
-
-/** @Annotation */
-class IdGenerator implements Annotation
-{
-    public $sequence;
-}
