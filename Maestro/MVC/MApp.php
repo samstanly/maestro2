@@ -177,7 +177,7 @@ class MApp
             return Manager::$controllers[$className];
         }
         $fileName = self::getHandlerFile($app, $module, 'services', $service);
-        mdump($fileName);
+        //mdump($fileName);
         include_once $fileName;
         $handler = new $className(self::$context);
         //Manager::$controllers[$className] = $handler;

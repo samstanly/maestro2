@@ -17,11 +17,16 @@
 
 namespace Maestro\Database\Platforms\PDOPgSQL;
 
+use Maestro\Database\MDatabase;
 use Maestro\Database\MSQL;
+use Maestro\Database\Platforms\MPlatform;
 use Maestro\Types\MType;
 
-class Platform extends \Doctrine\DBAL\Platforms\PostgreSqlPlatform {
+class Platform extends \Doctrine\DBAL\Platforms\PostgreSqlPlatform implements MPlatform {
 
+    /**
+     * @var MDatabase
+     */
     public $db;
 
     public function __construct($db) {
@@ -101,7 +106,7 @@ class Platform extends \Doctrine\DBAL\Platforms\PostgreSqlPlatform {
         return $stmt->fetchObject();
     }
 
-    public function convertToDatabaseValue($value, $type, &$bindingType) {
+    public function convertToDatabaseValue($value, $type) {
         $class = MType::getType($type);
         if($class){
             $value = $class->convertToDatabaseValue($value,$this);

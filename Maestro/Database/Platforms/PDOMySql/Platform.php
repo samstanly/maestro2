@@ -19,9 +19,10 @@
 namespace Maestro\Database\Platforms\PDOMySql;
 
 use Doctrine\DBAL\Types\Type;
+use Maestro\Database\Platforms\MPlatform;
 use Maestro\Persistence\EPersistenceException;
 
-class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
+class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatform
 {
 
     public $db;
@@ -128,8 +129,11 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         return $stmt->fetchObject();
     }
 
-    public function convertToDatabaseValue($value, $type, &$bindingType)
+    public function convertToDatabaseValue($value, $type)
     {
+        if($type == 'string' || $type == 'integer'){
+            return $value;
+        }
         if(!class_exists($type)){ //Procura "mcpf" ou "datetime
             $type .= "Type";
             if(!class_exists($type)){ //Procura "mcpftype" ou "datetimetype"
@@ -174,11 +178,8 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
 
     public function convertToPHPValue($value, $type)
     {
-        if(!class_exists($type)){ //Procura "mcpf" ou "datetime
-            $type .= "Type";
-            if(!class_exists($type)){ //Procura "mcpftype" ou "datetimetype"
-                return $value; //Não requer tratamento
-            }
+        if(!\Maestro\Types\MType::getType($type)){ //Procura "mcpf" ou "datetime
+            return $value; //Não requer tratamento
         }
         $obj = new $type();
         if ($obj instanceof Type) {

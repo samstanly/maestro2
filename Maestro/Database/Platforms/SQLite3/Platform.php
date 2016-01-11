@@ -18,7 +18,9 @@
 
 namespace Maestro\Database\Platforms\SQLite3;
 
-class Platform extends \Doctrine\DBAL\Platforms\SqlitePlatform {
+use Maestro\Database\Platforms\MPlatform;
+
+class Platform extends \Doctrine\DBAL\Platforms\SqlitePlatform implements MPlatform {
 
     public $db;
 

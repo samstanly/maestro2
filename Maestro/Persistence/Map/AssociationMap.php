@@ -17,14 +17,24 @@
 namespace Maestro\Persistence\Map;
 
 use Maestro,
-        Maestro\Persistence\Criteria\RetrieveCriteria as RetrieveCriteria;;
+        Maestro\Persistence\Criteria\RetrieveCriteria as RetrieveCriteria;
+use Maestro\Database\MSQL;
+use Maestro\Persistence\Criteria\OperandArray;
+
+;
 
 class AssociationMap {
 
     private $manager;
     private $name;
+    /**
+     * @var ClassMap
+     */
     private $fromClassMap;
     private $fromClassName;
+    /**
+     * @var ClassMap
+     */
     private $toClassMap;
     private $toClassName;
     private $associativeTable;
@@ -37,7 +47,13 @@ class AssociationMap {
 //    private $entriesAttributes = array();
     private $fromKey;
     private $toKey;
+    /**
+     * @var null|AttributeMap
+     */
     private $fromAttributeMap = NULL;
+    /**
+     * @var null|AttributeMap
+     */
     private $toAttributeMap = NULL;
     private $order = array();
     private $orderAttributes = NULL;
@@ -277,7 +293,7 @@ class AssociationMap {
     }
 
     public function getInsertStatement($object, $refObject) {
-        $statement = new \Maestro\Database\MSQL();
+        $statement = new MSQL();
         $statement->setDb($this->fromClassMap->getDb());
         $statement->setTables($this->getAssociativeTable());
         $columns = $this->fromAttributeMap->getName();
@@ -290,7 +306,7 @@ class AssociationMap {
     }
 
     public function getInsertStatementId($object, $id) {
-        $statement = new \Maestro\Database\MSQL();
+        $statement = new MSQL();
         $statement->setDb($this->fromClassMap->getDb());
         $statement->setTables($this->getAssociativeTable());
         $columns = $this->fromAttributeMap->getName();
@@ -304,7 +320,7 @@ class AssociationMap {
 
     public function getUpdateStatementId($object, $id, $value = NULL) {
         // $id = array com PK dos objetos associados
-        $statement = new \Maestro\Database\MSQL();
+        $statement = new MSQL();
         $statement->setDb($this->fromClassMap->getDb());
         $statement->setTables($this->toClassMap->getTableName());
         $a = new OperandArray($id);

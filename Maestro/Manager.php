@@ -537,7 +537,6 @@ class Manager extends Nette\Object
      */
     public static function addAutoloadClass($className, $classPath)
     {
-        mdump($classPath);
         if (file_exists($classPath)) {
             self::$autoload[$className] = $classPath;
         }
@@ -576,7 +575,7 @@ class Manager extends Nette\Object
                 }
             }
             mdump('autoload creating control : ' . $className);
-            mtracestack();
+            //mtracestack();
             $controlClass = create_function('', 'class ' . $className . ' extends \MControl {}');
             $controlClass();
         }

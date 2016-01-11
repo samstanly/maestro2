@@ -123,6 +123,21 @@ class MDate extends MType
         $this->datetime = MKrono::getDateTime($datetime, $this->format);
     }
 
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform){}
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        return \Manager::Date($value);
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform){
+        return $this->format('Y-m-d');
+    }
+
+    public function getName(){
+      return self::MDate;
+    }
+
     public function __call($name, $arguments)
     {
         if ($arguments) {

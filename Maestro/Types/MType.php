@@ -25,13 +25,17 @@ use Nette\NotImplementedException;
 abstract class MType
 {
     const MCPF = 'mcpf';
+    const MDate = 'mdate';
     const MPASSWORD = 'mpassword';
+    const MTIMESTAMP = 'mtimestamp';
     /**
      * @var array Maestro default Types mappings
      */
     private static $_MaestroTypesMap = array(
         self::MCPF => 'Maestro\Types\MCPF',
-        self::MPASSWORD => 'Maestro\Types\MPassword'
+        self::MPASSWORD => 'Maestro\Types\MPassword',
+        self::MData => 'Maestro\Types\MDate'
+        self::MTIMESTAMP => 'Maestro\Types\MTimestamp'
     );
 
     /**
@@ -50,24 +54,12 @@ abstract class MType
         return Type::getType($name);
     }
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract function getSQLDeclaration(array $fieldDeclaration, Doctrine\DBAL\Platforms\AbstractPlatform $platform);
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract function convertToPHPValue($value, Doctrine\DBAL\Platforms\AbstractPlatform $platform);
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract function convertToDatabaseValue($value, Doctrine\DBAL\Platforms\AbstractPlatform $platform);
 
-    public function getName()
-    {
-        throw new NotImplementedException();
-    }
+    public abstract function getName();
 }
 
