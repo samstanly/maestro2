@@ -38,8 +38,9 @@ class PersistentManager {
     private $locked = false;
     private $configLoader;
 
-    public static function getInstance($configLoader = 'PHP') {
+    public static function getInstance() {
         if (self::$instance == NULL) {
+            $configLoader = Manager::getConf('db.configLoader') ?: 'PHP';
             $manager = self::$instance = new PersistentManager();
             self::$container = Manager::getInstance();
             $manager->setConfigLoader($configLoader);
@@ -48,7 +49,17 @@ class PersistentManager {
     }
 
     public function setConfigLoader($configLoader='PHP') {
-        $this->configLoader = ($configLoader == 'PHP') ? new PHPConfigLoader($this) : new XMLConfigLoader($this);
+        switch($configLoader){
+            case 'PHP':
+                $this->configLoader = new PHPConfigLoader($this);
+                break;
+            case 'Annotation':
+                $this->configLoader = new AnnotationConfigLoader($this);
+                break;
+            case 'XML':
+                $this->configLoader = new XMLConfigLoader($this);
+                break;
+        };
     }
 
     public function getConfigLoader() {

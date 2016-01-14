@@ -490,7 +490,7 @@ class MKrono
         return checkdate($month, $day, $year);
     }
 
-    public function invertDate($date)
+    public static function invertDate($date)
     {
         $krono = self::getInstance();
         $date = str_replace('-', $krono->separator, $date);

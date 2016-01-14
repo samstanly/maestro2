@@ -17,14 +17,45 @@
  */
 namespace Maestro\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\Type;
 use Maestro\Manager;
+use Nette\NotImplementedException;
 
-class MType {
-
-    public function __construct() {
-        
+abstract class MType
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function getType($type)
+    {
+        if(Type::hasType($type)) {
+            return Type::getType($type);
+        }else if(MType::hasType($type)){
+            $class = Manager::getConf('types')[$type];
+            return new $class();
+        }
+        return false;
     }
 
-}
+    public static function hasType($type){
+        if(Type::hasType($type)) {
+            return true;
+        }else{
+            $className = Manager::getConf('types')[$type];
+            if(isset($type)) {
+                Type::addType($type, $className);
+                return true;
+            }
+        }
+        return false;
+    }
 
-?>
+    public abstract function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform);
+
+    public abstract function convertToPHPValue($value, AbstractPlatform $platform);
+
+    public abstract function convertToDatabaseValue($value, AbstractPlatform $platform);
+
+    public abstract function getName();
+}

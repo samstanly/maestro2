@@ -16,19 +16,41 @@
  */
 namespace Maestro\Types;
 
-use Maestro\Manager;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 /**
  * Classe utilitária para trabalhar com CPF.
  * Métodos para formatar e validar strings representando CPF.
- * 
+ *
  * @category    Maestro
  * @package     Core
  * @subpackage  Types
- * @version     1.0 
+ * @version     1.0
  * @since       1.0
  */
-class MCPF extends MType {
+class MCPF extends MType
+{
+
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        //Same as regular string
+        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        return new MCPF($value);
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        return MCPF::getPlainValue($value);
+    }
+
+    public function getName()
+    {
+        return self::MCPF;
+    }
 
     /**
      * Valor plano (sem pontuação) do CPF
@@ -36,50 +58,64 @@ class MCPF extends MType {
      */
     private $value;
 
-    public function __construct($value) {
+    public function __construct($value)
+    {
         $this->setValue($value);
     }
 
-    public static function create($value) {
+    public static function create($value)
+    {
         return new MCPF($value);
     }
 
-    public function getValue() {
-        return $this->value ? : '';
+    public function getValue()
+    {
+        return $this->value ?: '';
     }
 
-    public function setValue($value) {
+    public function setValue($value)
+    {
+        $this->value = MCPF::cleanValue($value);
+    }
+
+    static public function validate(MCPF $value)
+    {
+        return $value->isValid();
+    }
+
+    public function isValid()
+    {
+        return $this->validateCPF();
+    }
+
+    public function format()
+    {
+        return sprintf('%s.%s.%s-%s', substr($this->value, 0, 3), substr($this->value, 3, 3), substr($this->value, 6, 3), substr($this->value, 9, 2));
+    }
+
+    public static function getPlainValue($value)
+    {
+        return MCPF::cleanValue($value);
+    }
+
+    public function __toString()
+    {
+        return $this->format();
+    }
+
+    private static function cleanValue($value){
         if (strpos($value, '.') !== false) { // $value está com pontuação
             $value = str_replace('.', '', $value);
             $value = str_replace('-', '', $value);
         }
-        $this->value = $value;
+        return $value;
     }
 
-    static public function validate($value) {        
-        return $value->isValid();
-    }
-
-    public function isValid() {
-        return $this->validateCPF();
-    }
-
-    public function format() {
-        return sprintf('%s.%s.%s-%s', substr($this->value, 0, 3), substr($this->value, 3, 3), substr($this->value, 6, 3), substr($this->value, 9, 2));
-    }
-
-    public function getPlainValue() {
-        return $this->getValue();
-    }
-
-    public function __toString() {
-        return $this->format();
-    }
-
-    private function validateCPF() {        
+    private function validateCPF()
+    {
         $cpf = $this->value;
         // Verifiva se o número digitado contém todos os digitos
-        $cpf = str_pad(ereg_replace('[^0-9]', '', $cpf), 11, '0', STR_PAD_LEFT);
+        $cpf = str_pad(preg_replace('[^0-9]', '', $cpf), 11, '0', STR_PAD_LEFT);
         // Verifica se nenhuma das sequências abaixo foi digitada, caso seja, retorna falso
         if (strlen($cpf) != 11 || $cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
             return false;

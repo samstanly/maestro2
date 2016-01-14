@@ -18,7 +18,8 @@
 
 namespace Maestro\Types;
 
-use Maestro\Manager,
+use Doctrine\DBAL\Platforms\AbstractPlatform,
+    Maestro\Manager,
     Maestro\Utils\MKrono;
 
 class MTimestamp extends MDate
@@ -38,6 +39,26 @@ class MTimestamp extends MDate
     {
         $dateTime = explode(" ", $this->format());
         return MKrono::invertDate($dateTime[0]) . ' ' . $dateTime[1];
+    }
+
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        // TODO: Implement getSQLDeclaration() method.
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        return new MTimestamp($value);
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        return $value->format('Y-m-d H:i:s');
+    }
+
+    public function getName()
+    {
+        return 'timestamp';
     }
 
 }

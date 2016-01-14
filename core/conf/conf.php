@@ -72,9 +72,9 @@ return array(
         'path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'. DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log',
         'level' => 2, // 0 (nenhum), 1 (apenas erros) ou 2 (erros e SQL)
         'handler' => "socket",
-		'peer' => '192.168.25.2',
+		'peer' => '',
         'strict' => '',
-        'port' => 9999 //Default 9999
+        'port' => 0 //Default 9999
     ),
     'mailer' => array(
         'smtpServer' => 'smtp.ufjf.br',
@@ -99,4 +99,10 @@ return array(
             'configurationClass' => 'Doctrine\DBAL\Configuration',
         ),
    ),
+    'types' => array(
+        'cpf' => 'Maestro\Types\MCPF',
+        'password' => 'Maestro\Types\MPassword',
+        'date' => 'Maestro\Types\MDate',
+        'timestamp' => 'Maestro\Types\MTimestamp'
+    )
 );

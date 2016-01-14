@@ -18,6 +18,7 @@
 
 namespace Maestro\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Maestro\Manager,
     Maestro\Utils\MKrono;
 
@@ -250,6 +251,25 @@ class MDate extends MType
         return MKrono::isValid($this->format());
     }
 
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        // TODO: Implement getSQLDeclaration() method.
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        return new MDate($value);
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        return $value->format('Y-m-d');
+    }
+
+    public function getName()
+    {
+        return 'date';
+    }
 }
 
 ?>

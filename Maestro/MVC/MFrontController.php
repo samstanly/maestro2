@@ -130,7 +130,7 @@ class MFrontController
 
     public static function getContext()
     {
-        return MApp::$context;
+        return MApp::getContext();
     }
 
     public static function getController()

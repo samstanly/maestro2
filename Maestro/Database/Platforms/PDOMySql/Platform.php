@@ -18,6 +18,8 @@
 
 namespace Maestro\Database\Platforms\PDOMySql;
 
+use Maestro\Types\MType;
+
 class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
 {
 
@@ -125,58 +127,22 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         return $stmt->fetchObject();
     }
 
-    public function convertToDatabaseValue($value, $type, &$bindingType)
+    public function convertToDatabaseValue($value, $type)
     {
-        if ($value === NULL) {
-            return $value;
+        if(MType::hasType($type)){
+            $obj = MType::getType($type);
+            $value = $obj->convertToDatabaseValue($value, $this);
         }
-        if ($type == '') {
-            if (is_object($value)) {
-                $type = substr(strtolower(get_class($value)), 1);
-            }
-        }
-        if ($type == 'date') {
-            return $value->format('Y-m-d');
-        } elseif ($type == 'timestamp') {
-            return $value->format('Y-m-d H:i:s');
-        } elseif (($type == 'decimal') || ($type == 'float')) {
-            return str_replace(',', '.', $value);
-        } elseif ($type == 'currency') {
-            return str_replace(',', '.', $value);
-        } elseif ($type == 'cpf') {
-            return $value->getPlainValue();
-        } elseif ($type == 'cnpj') {
-            return $value->getPlainValue();
-        } elseif ($type == 'blob') {
-            $value = base64_encode($value->getValue());
-            $bindingType = 3; //PDO::PARAM_LOB
-            return $value;
-        } else {
-            return $value;
-        }
+        return $value;
     }
 
     public function convertToPHPValue($value, $type)
     {
-        if ($type == 'date') {
-            return \Manager::Date($value);
-        } elseif ($type == 'timestamp') {
-            return \Manager::Timestamp($value);
-        } elseif ($type == 'currency') {
-            return \Manager::currency($value);
-        } elseif ($type == 'cnpj') {
-            return \MCNPJ::create($value);
-        } elseif ($type == 'cpf') {
-            return \MCPF::create($value);
-        } elseif ($type == 'blob') {
-            if ($value) {
-                $value = base64_decode($value);
-            }
-            $value = \MFile::file($value);
-            return $value;
-        } else {
-            return $value;
+        if(MType::hasType($type)){
+            $obj = MType::getType($type);
+            $value = $obj->convertToPHPValue($value, $this);
         }
+        return $value;
     }
 
     public function convertColumn($value, $type)
