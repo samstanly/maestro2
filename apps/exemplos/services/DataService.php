@@ -85,7 +85,7 @@ class DataService extends MService {
             $this->data->error = true;
             $this->data->result = $e->getMessage();
         }
-        $this->render($this->data);
+        $this->renderJSON();
     }
 
 }

@@ -16,8 +16,7 @@
  */
 namespace Maestro\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Maestro\Utils\MNull;
+use Maestro\Manager;
 
 /**
  * Classe utilitária para trabalhar com CPF.
@@ -30,29 +29,6 @@ use Maestro\Utils\MNull;
  * @since       1.0
  */
 class MCPF extends MType {
-    /**
-     * Doctrine type extension
-     */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
-    {
-        //Same as regular string
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
-    }
-
-    public function convertToPHPValue($value, AbstractPlatform $platform)
-    {
-        return new MCPF($value);
-    }
-
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
-    {
-        return MCPF::getPlainValue($value);
-    }
-
-    public function getName()
-    {
-        return self::MCPF;
-    }
 
     /**
      * Valor plano (sem pontuação) do CPF
@@ -64,25 +40,26 @@ class MCPF extends MType {
         $this->setValue($value);
     }
 
+    public static function create($value) {
+        return new MCPF($value);
+    }
+
     public function getValue() {
         return $this->value ? : '';
     }
 
     public function setValue($value) {
-
+        if (strpos($value, '.') !== false) { // $value está com pontuação
+            $value = str_replace('.', '', $value);
+            $value = str_replace('-', '', $value);
+        }
+        $this->value = $value;
     }
 
-    /**
-     * @param $mcpf MCPF
-     * @return bool
-     */
-    public function validate($mcpf) {
-        return $mcpf->isValid();
+    static public function validate($value) {        
+        return $value->isValid();
     }
 
-    /**
-     * @return bool
-     */
     public function isValid() {
         return $this->validateCPF();
     }
@@ -91,12 +68,12 @@ class MCPF extends MType {
         return sprintf('%s.%s.%s-%s', substr($this->value, 0, 3), substr($this->value, 3, 3), substr($this->value, 6, 3), substr($this->value, 9, 2));
     }
 
-    public static function getPlainValue($value) {
-        if (strpos($value, '.') !== false) { // $value está com pontuação
-            $value = str_replace('.', '', $value);
-            $value = str_replace('-', '', $value);
-        }
-        return $value;
+    public function getPlainValue() {
+        return $this->getValue();
+    }
+
+    public function __toString() {
+        return $this->format();
     }
 
     private function validateCPF() {        

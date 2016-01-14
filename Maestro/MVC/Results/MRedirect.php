@@ -31,6 +31,7 @@ class MRedirect extends MResultObject
 
     public function setContent()
     {
+        mtrace('Executing MRedirect');
         if (Manager::isAjaxCall()) {
             $this->ajax->setResponseType('JSON');
             $this->ajax->setType('redirect');

@@ -79,8 +79,23 @@ class MController extends MHandler
                     $values[] = $value;
                 }
                 $result = call_user_func_array([$this,$action],$values);
+
                 if(!$this->getResult()){
+                    if (!Manager::isAjaxCall()) {
+                        Manager::$ajax = new \Maestro\UI\MAjax(Manager::getOptions('charset'));
+                    }
+                    $this->setResult(new Results\MRenderJSON(json_encode($result)));
+                    /*
+                    $this->renderJSON(json_encode($result));
                     $this->render($result);
+
+                    if (!Manager::isAjaxCall()) {
+//                        Manager::$ajax = new \Maestro\UI\MAjax(Manager::getOptions('charset'));
+                    }
+                    $ajax = Manager::getAjax();
+                    $ajax->setData(json_encode($result));
+                    */
+
                 }
                 //$this->$action();
             } catch (\Exception $e) {

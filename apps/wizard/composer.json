@@ -5,8 +5,5 @@
         "psr-4": {
             "wizard\\": ""
         }
-    },    
-    "require": {
-        "ulrichsg/getopt-php": "2.3.*"
     }
 }

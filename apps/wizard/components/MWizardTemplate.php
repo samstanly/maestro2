@@ -113,11 +113,28 @@ class MWizardTemplate {
 
     public function saveResult($fileName, $baseDir = '') {
         if ($baseDir != '') {
-            $file = $baseDir . (substr($baseDir,-1) == '/' ? '' : '/') . $fileName;
+            $file = $baseDir;//Manager::getAppPath($baseDir);
+            $dirs = explode('/', $fileName);
+            $n = count($dirs);
+            if ($n > 0) {
+                $path = $file;
+                for($i = 0; $i < ($n - 1); $i++){
+                    $path .= '/' . $dirs[$i];
+                    if (!is_dir($path)) {
+                        mkdir($path);
+                        chmod($path, octdec(777));
+                    }
+                }
+            }
+            $file .= '/' . $fileName;
         } else {
             $file = Manager::getAppPath($fileName);
+            $path = pathinfo($file, PATHINFO_DIRNAME);
+            if (!is_dir($path)) {
+                mkdir($path);
+                chmod($path, octdec(777));
+            }
         }
-        mkdir(dirname($file),octdec(777),true);
         file_put_contents($file, $this->resultFile);
         chmod($file, octdec(777));
     }

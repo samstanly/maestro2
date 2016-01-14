@@ -68,7 +68,7 @@ class MUtil
      * @returns (tipo) desc
      *
      */
-    public static function setIfNull(&$value1, $value2)
+    static public function setIfNull(&$value1, $value2)
     {
         if ($value1 == NULL)
             $value1 = $value2;
@@ -80,8 +80,11 @@ class MUtil
      *
      * @param &$value1 (tipo) desc
      * @param $value2 (tipo) desc
+     *
+     * @returns (tipo) desc
+     *
      */
-    public static function setIfNotNull(&$value1, $value2)
+    public function setIfNotNull(&$value1, $value2)
     {
         if ($value2 != NULL)
             $value1 = $value2;
@@ -95,7 +98,7 @@ class MUtil
      *
      * @param $value (misc) valor a ser testado
      *
-     * @returns bool value
+     * @returns (bool) value
      *
      */
     public static function getBooleanValue($value)
@@ -112,7 +115,7 @@ class MUtil
     /**
      * Retorna o valor float da variável, com base no locale atual (definido via setlocale)
      * @param $value (string) valor a ser convertido
-     * @returns float value
+     * @returns (float) value
      *
      */
     public static function getFloatValue($value)
@@ -584,36 +587,6 @@ class MUtil
             }
         }
         return $isNull;
-    }
-
-    /**
-     * Cria uma nova entrada no conf.db para um banco de dados.
-     * @param string $name
-     * @param string $dbURL
-     * @return array com os dados do banco.
-     */
-    public static function addDatabase($name,$dbURL){
-        $url = parse_url($dbURL);
-        switch ($url['scheme']){
-            case "postgresql":
-                $driver = 'pdo_pgsql';
-                break;
-            case "mysql":
-                $driver = 'pdo_mysql';
-                break;
-            default:
-                $driver =  '';
-        }
-        $data = [
-            'driver' => $driver,
-            'host' => $url['host'],
-            'dbname' => substr($url['path'],1),
-            'user' => $url['user'],
-            'password' => $url['pass'],
-            'charset' => 'UTF8',
-        ];
-        Maestro\Manager::setConf("db.{$name}",$data);
-        return $data;
     }
 
 }

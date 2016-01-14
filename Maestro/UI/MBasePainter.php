@@ -177,8 +177,8 @@ EOT;
     }
 
     public function msyntax($control) {
-        Manager::import('extensions::geshi::geshi', 'GeSHi');
-        $css = Manager::getAbsolutePath('extensions/geshi/geshi.css');
+        Manager::import('core::classes::extensions::geshi::geshi', 'GeSHi');
+        $css = Manager::getAbsolutePath('core/classes/extensions/geshi/geshi.css');
         $this->page->addStyleSheet($css);
         $cssCustom = Manager::getAppPath('public/css/geshiCustom.css');
         if (file_exists($cssCustom)) {

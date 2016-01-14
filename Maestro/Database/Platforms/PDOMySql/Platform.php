@@ -18,11 +18,7 @@
 
 namespace Maestro\Database\Platforms\PDOMySql;
 
-use Doctrine\DBAL\Types\Type;
-use Maestro\Database\Platforms\MPlatform;
-use Maestro\Persistence\EPersistenceException;
-
-class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatform
+class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
 {
 
     public $db;
@@ -129,14 +125,8 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatfo
         return $stmt->fetchObject();
     }
 
-    public function convertToDatabaseValue($value, $type)
+    public function convertToDatabaseValue($value, $type, &$bindingType)
     {
-        if(\Maestro\Types\MType::hasType($type)){
-            $obj = \Maestro\Types\MType::getType($type);
-            $value = $obj->convertToDatabaseValue($value, $this);
-        }
-        return $value;
-        /*
         if ($value === NULL) {
             return $value;
         }
@@ -164,17 +154,10 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatfo
         } else {
             return $value;
         }
-        */
     }
 
     public function convertToPHPValue($value, $type)
     {
-        if(\Maestro\Types\MType::hasType($type)){
-            $obj = \Maestro\Types\MType::getType($type);
-            $value = $obj->convertToPHPValue($value, $this);
-        }
-        return $value;
-        /*
         if ($type == 'date') {
             return \Manager::Date($value);
         } elseif ($type == 'timestamp') {
@@ -194,7 +177,6 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatfo
         } else {
             return $value;
         }
-        */
     }
 
     public function convertColumn($value, $type)

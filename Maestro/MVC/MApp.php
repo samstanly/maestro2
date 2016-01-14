@@ -41,7 +41,10 @@ class MApp
     {
         $context = self::$context = new MContext(Manager::$request);
         $app = self::$app = Manager::$app = $context->getApp();
-        $appStructure = (object)[$app => new MAppStructure($app, $context->getAppPath())];
+        //$appStructure = Manager::getSession()->container('appStructure');
+        //if ($appStructure->$app == null) {
+            $appStructure->$app = new MAppStructure($app, $context->getAppPath());
+        //}
         $context->defineContext($appStructure->$app);
         self::$structure = $appStructure;
         self::$module = $context->getModule();
@@ -177,7 +180,7 @@ class MApp
             return Manager::$controllers[$className];
         }
         $fileName = self::getHandlerFile($app, $module, 'services', $service);
-        //mdump($fileName);
+        mdump($fileName);
         include_once $fileName;
         $handler = new $className(self::$context);
         //Manager::$controllers[$className] = $handler;

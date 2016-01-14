@@ -85,6 +85,7 @@ class MTrace
         }
         $this->trace[] = $message;
         $this->logger->logMessage('[CUSTOM]' . $message);
+
     }
 
     public function traceStack($file = '', $line = 0)

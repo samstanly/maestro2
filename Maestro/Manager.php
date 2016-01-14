@@ -284,7 +284,7 @@ class Manager extends Nette\Object
 
     /**
      * Cria (se não existe) e retorna a instância singleton da class Manager.
-     * @return Manager
+     * @returns (object) Instance of Manager class
      */
     public static function getInstance()
     {
@@ -316,14 +316,13 @@ class Manager extends Nette\Object
      */
     public static function init($configFile = '', $basePath = '', $app = '')
     {
-        $basePath = $basePath ?: dirname(__DIR__);
         self::$basePath = $basePath;
         self::$appsPath = $basePath . DIRECTORY_SEPARATOR . 'apps';
         self::$coreAppsPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'apps';
         self::$app = $app;
         self::$confPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'conf';
         self::$publicPath = $basePath . DIRECTORY_SEPARATOR . 'public';
-        self::$classPath = $basePath . DIRECTORY_SEPARATOR . 'Maestro';
+        self::$classPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'classes';
         // Carrega configurações 
         $managerConfigFile = self::$confPath . DIRECTORY_SEPARATOR . 'conf.php';
         self::loadConf($managerConfigFile);
@@ -350,6 +349,7 @@ class Manager extends Nette\Object
         self::$session = new MSession(self::$request->request, self::$response);
         self::$session->init($_REQUEST['sid'] === '0' ? 0 : mrequest('sid'));
         self::$baseURL = self::$request->getBaseURL(false);
+
         Manager::logMessage('[RESET_LOG_MESSAGES]');
         if (self::$java = ($_SERVER["SERVER_SOFTWARE"] == "JavaBridge")) {
             require_once (self::$home . "/java/Java.inc");
@@ -379,9 +379,8 @@ class Manager extends Nette\Object
 
     /**
      * Método utilitário para geração de um path.
-     * @param string $path
-     * @param string $append
-     * @return string
+     * @param type $path
+     * @param type $append
      */
     private static function getPath($path, $append = '')
     {
@@ -532,8 +531,8 @@ class Manager extends Nette\Object
 
     /**
      * Adiciona classe a ser carregada via Autoloader.
-     * @param string $className Nome da classe.
-     * @param string $classPath Path da classe.
+     * @param type $className Nome da classe.
+     * @param type $classPath Path da classe.
      */
     public static function addAutoloadClass($className, $classPath)
     {
@@ -549,7 +548,7 @@ class Manager extends Nette\Object
      */
     public static function autoload($className)
     {
-        mdump('autoload = ' . $className);
+        //mdump('autoload = ' . $className);
         $class = strtolower($className);
         $file = self::$autoload[$class];
         $include = '';
@@ -903,7 +902,7 @@ class Manager extends Nette\Object
     /**
      * Define dinamicamente o valor de uma configuração.
      * @param string $key Chave no formato x.y.z
-     * @param mixed $value
+     * @param type $value
      */
     public static function setConf($key, $value)
     {
@@ -1195,19 +1194,6 @@ class Manager extends Nette\Object
         $app = self::getConf('theme.app') ?: self::getApp();
         $url = self::getAbsoluteURL("apps/{$app}/public/themes/{$theme}{$file}");
         return $url;
-    }
-
-    /**
-     * @param string $URI {$app}/{$controller}/{$action}
-     * @param array $REQUEST will overwrite $_REQUEST
-     * @return string
-     */
-    public static function execute($URI,$REQUEST = array()){
-        $_SERVER['REQUEST_URI'] = ($URI[0] == '/' ? '' : '/') . $URI;
-        $_REQUEST = $REQUEST;
-        $dir = dirname(dirname(dirname(__FILE__)));
-        self::init();
-        return self::processRequest(true);
     }
 
     /**

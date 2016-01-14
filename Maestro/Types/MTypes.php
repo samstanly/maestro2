@@ -38,6 +38,8 @@ use Maestro\Manager;
  */
 namespace Maestro\Types;
 
+use Maestro\Manager;
+
 class MTypes {
 
     /*
@@ -83,7 +85,7 @@ class MTypes {
     }
 
     public static function getCPF($plainValue){
-        return new MCPFType($plainValue);
+        return new MCPF($plainValue);
     }
 
     public static function getCNPJ($plainValue){
@@ -139,10 +141,6 @@ class MTypes {
     }
 
     public static function getPlainCurrency($value){
-        return $value->getPlainValue();
-    }
-
-    public static function getPlainMCPF($value){
         return $value->getPlainValue();
     }
 

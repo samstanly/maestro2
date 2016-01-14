@@ -1,7 +1,5 @@
 <?php
 
-require __DIR__ . '/MWizardTemplate.php';
-
 class MWizardScript {
 
     public $fileScript;
@@ -39,7 +37,7 @@ class MWizardScript {
             if ($className == 'globals')
                 continue;
             $properties = $methods = $validators = '';
-            //mdump('handleClass = ' . $className);
+            mdump('handleClass = ' . $className);
             $extends = $node['extends'];
             $log = $node['log'];
 
@@ -62,11 +60,11 @@ class MWizardScript {
                 if ($tableName) {
                     $sessionId = Manager::getSession()->getId();
                     $url = Manager::getAppURL($appName, $moduleName . '/tabelageral/getenumeration/' . $tableName . "?ajaxResponseType=JSON", true);
-                    ////mdump($url);
+                    //mdump($url);
                     if ($stream = fopen($url, 'r')) {
                         $result = MJSON::decode(stream_get_contents($stream));
                         $constants = $result['data']['result']['items'];
-                        ////mdump($constants);
+                        //mdump($constants);
                         foreach ($constants as $value) {
                             $consts .= "\n    const " . str_replace(' ','_',$value['name']) . " = " . $value['idTable'] . ";";
                         }
@@ -256,14 +254,14 @@ class MWizardScript {
             $template->setVar($var);
             $template->setTemplate('/public/files/templates/map.php');
             $template->applyClass();
-            $template->saveResult("models/map/{$className}Map.php", $this->baseDir);
+            $template->saveResult("{$moduleName}/models/map/{$className}Map.php", $this->baseDir);
 
             $template = new MWizardTemplate();
             $template->setVar($var);
             $template->setTemplate('/public/files/templates/model.php');
             $template->applyClass();
-            $template->saveResult("models/{$className}.php", $this->baseDir);
-            /*
+            $template->saveResult("{$moduleName}/models/{$className}.php", $this->baseDir);
+
             // Create CRUD
             $fileName = array();
             $fileName[] = array('public/files/templates/formBase.xml', "{$moduleName}/views/{$lowerClassName}/formBase.xml");
@@ -291,7 +289,6 @@ class MWizardScript {
             // define actions
             $upperClass = ucFirst($className);
             $actions[] = $tab . $tab . "'{$className}' => array('{$upperClass}', '{$moduleName}/{$className}/main', '{$moduleName}IconForm', '', A_ACCESS, array()),";
-            */
         }
         $actions[] = $tab . "))\n";
 
@@ -304,27 +301,26 @@ class MWizardScript {
         $template->setVar($var);
         $template->setTemplate('/public/files/templates/actions.php');
         $template->applyClass();
-        $template->saveResult("conf/actions.php", $this->baseDir);
+        $template->saveResult("{$moduleName}/conf/actions.php", $this->baseDir);
 
 
         // create Conf
         $template = new MWizardTemplate();
         $template->setTemplate('/public/files/templates/conf.php');
         $template->applyClass();
-        $template->saveResult("conf/conf.php", $this->baseDir);
+        $template->saveResult("{$moduleName}/conf/conf.php", $this->baseDir);
 
 
         // create Main
         $template = new MWizardTemplate();
         $template->setVar($var);
-
         $template->setTemplate('/public/files/templates/main.xml');
         $template->applyClass();
-        $template->saveResult("views/main/main.xml", $this->baseDir);
+        $template->saveResult("{$moduleName}/views/main/main.xml", $this->baseDir);
 
         $template->setTemplate('/public/files/templates/MainController.php');
         $template->applyClass();
-        $template->saveResult("controllers/MainController.php", $this->baseDir);
+        $template->saveResult("{$moduleName}/controllers/MainController.php", $this->baseDir);
     }
 
     public function generateEnumeration($className, $var) {

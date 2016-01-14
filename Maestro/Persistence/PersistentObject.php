@@ -21,8 +21,6 @@ namespace Maestro\Persistence;
 use Maestro,
     Maestro\Persistence\Map\AttributeMap as AttributeMap,
     Maestro\Persistence\Criteria\RetrieveCriteria as RetrieveCriteria;
-use Maestro\Manager;
-use Maestro\Persistence\Map\ClassMap;
 
 class PersistentObject
 {
@@ -32,15 +30,11 @@ class PersistentObject
     protected $_className;
     private $db;
 
-    public function __construct($configLoader)
+    public function __construct($configLoader = 'PHP')
     {
-        $configLoader = $configLoader ?: Manager::getConf('db.configLoader');
         $this->manager = PersistentManager::getInstance($configLoader);
     }
 
-    /**
-     * @return ClassMap
-     */
     public function getClassMap()
     {
         return $this->manager->getClassMap($this->_className);
@@ -196,9 +190,6 @@ class PersistentObject
         return $this->getClassMap()->getAttributeMap($attributeName)->getColumnName();
     }
 
-    /**
-     * @return Manager/Database/MDatabase
-     */
     public function getDb()
     {
         return $this->getClassMap()->getDb();

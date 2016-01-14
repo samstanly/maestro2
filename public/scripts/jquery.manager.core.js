@@ -100,15 +100,10 @@ var manager = {
         success: function (response, textStatus, jqXHR, context) {
             if (typeof jqXHR === 'object') {
                 var dataType = manager._getDataType(jqXHR.getResponseHeader('Content-Type')); // html | json | plain | xml
-                if (dataType == 'plain'){
-                    dataType = 'html';
-                }
-
             } else {
                 var dataType = jqXHR;
             }
             context['response'] = response;
-            console.log(dataType);
             manager._handleResponse[dataType](context);
         },
         error: function (jqXHR, textStatus, errorThrown, context) {

@@ -18,6 +18,8 @@
 
 namespace Maestro\Services\Exception;
 
+use Maestro\Manager;
+
 class ETimeOutException extends EMException
 {
 

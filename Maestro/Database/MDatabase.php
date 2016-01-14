@@ -18,7 +18,7 @@
 
 namespace Maestro\Database;
 
-use Maestro\Manager,
+use Maestro,
     Doctrine\DBAL;
 
 class MDatabase {
@@ -45,10 +45,7 @@ class MDatabase {
     private $config;       // identifies db configuration in conf.php
     private $params;
     private $connection;   // Doctrine\DBAL\Connection object
-    private $status;
-    /**
-     ** @type \Doctrine\DBAL\Platforms\AbstractPlatform
-    **/
+    private $status;       // 'open' or 'close'
     private $platform;     // platform of current driver
     private $transaction;
     private $name;
@@ -58,7 +55,7 @@ class MDatabase {
     public function __construct($name = 'default') {
         try {
             $this->name = trim($name);
-            $this->config = Manager::getConf("db.{$name}");
+            $this->config = \Manager::getConf("db.{$name}");
             $platform = self::$_platformMap[$this->config['driver']];
             $this->platform = new $platform($this);
             $this->config['platform'] = $this->platform;
@@ -75,7 +72,6 @@ class MDatabase {
                 $this->ormLogger = new $ormLogger();
             }
         } catch (\Exception $e) {
-            echo $e->getMessage() . PHP_EOL;
             throw new EDBException('Erro na conexão com o banco de dados.');
         }
     }

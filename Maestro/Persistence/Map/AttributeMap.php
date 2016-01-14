@@ -17,14 +17,9 @@
 namespace Maestro\Persistence\Map;
 
 use Maestro;
-use Maestro\Database\Platforms\MPlatform;
-use Maestro\Manager;
 
-class AttributeMap{
+class AttributeMap {
 
-    /**
-     * @var ClassMap
-     */
     private $classMap;
     private $name;
     private $columnName;
@@ -37,12 +32,9 @@ class AttributeMap{
     private $keyType;
     private $idGenerator;
     private $db;
-    /**
-     * @type MPlatform
-     */
     private $platform;
 
-    public function __construct($name,ClassMap $classMap) {
+    public function __construct($name, $classMap) {
         $this->name = $name;
         $this->classMap = $classMap;
         $this->db = $classMap->getDb();
@@ -105,7 +97,7 @@ class AttributeMap{
         return $this->converter;
     }
 
-    public function setValue(Maestro\MVC\MBusinessModel $object, $value) {
+    public function setValue($object, $value) {
         if (($pos = strpos($this->name, '.')) !== FALSE) {
             $nested = substr($this->name, 0, $pos);
             $nestedObject = $object->get($nested);
@@ -124,7 +116,7 @@ class AttributeMap{
         }
     }
 
-    public function getValue(Maestro\MVC\MBusinessModel $object) {
+    public function getValue($object) {
         return $object->get($this->index ? $this->name . $this->index : $this->name);
     }
 
@@ -172,7 +164,7 @@ class AttributeMap{
     public function convertValue($value) {
         if (is_array($this->converter)) {
             foreach ($this->converter as $conv => $args) {
-                $charset = Manager::getConf("options.charset");
+                $charset = \Manager::getConf("options.charset");
                 if ($conv == 'case') {
                     if ($args == 'upper') {
                         $value = mb_strtoupper($value, $charset);

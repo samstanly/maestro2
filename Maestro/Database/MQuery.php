@@ -56,9 +56,6 @@ class MQuery
      */
     public $metadata;
     public $db; // mdatabase object
-    /**
-     * @var MSQL
-     */
     public $msql; // the SQL object
     public $sql; // the SQL command string
     public $statement; // a parsed sql command - used by some drivers

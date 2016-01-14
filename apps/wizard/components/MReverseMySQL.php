@@ -1,5 +1,5 @@
 <?php
-use Maestro\Manager;
+
 class MReverseMySQL {
 
     public $fileScript;
@@ -12,14 +12,6 @@ class MReverseMySQL {
     private $package;
     public $generatedMaps;
     public $errors;
-
-    public function __construct($app,$module,$database,$output)
-    {
-        $this->appName = $app;
-        $this->moduleName = $module;
-        $this->databaseName = $database;
-        $this->fileScript = $output;
-    }
 
     public function setBaseDir($dir) {
         $this->baseDir = $dir;
@@ -41,11 +33,9 @@ class MReverseMySQL {
         $this->databaseName = $name;
     }
 
-
     public function generate() {
         $db = Manager::getDatabase($this->databaseName);
         $pf = $db->getPlatForm();
-        $classes = [];
         $queryTables = $db->getQueryCommand($pf->getListTablesSQL());
         foreach ($queryTables->getResult() as $tables) {
             $table = $tables[0];
@@ -53,7 +43,6 @@ class MReverseMySQL {
             $queryColumns = $db->getQueryCommand($pf->getListTableColumnsSQL($table));
             $pk = 0;
             $binding = false;
-            mdump($queryColumns->getResult());
             foreach ($queryColumns->getResult() as $column) {
                 $col = "attributes['" . $column[0] . "'] = " . '"' . $column[0] . ',' . $this->getType($column[1]) . ',';
                 $col .= (($column[2] == 'NO') ? 'not null' : '' ) . ',';
@@ -123,13 +112,13 @@ class MReverseMySQL {
         }
 
         $map = implode("\n", $document);
-        file_put_contents($this->fileScript, $map);
-        return $this->fileScript;
+        $filename = $this->baseDir . '/' . $this->fileScript;
+        file_put_contents($filename, $map);
     }
 
     private function getType($dbType) {
         $type = 'string';
-        $dbType = preg_replace('/\(.*\)/', "", $dbType);
+        $dbType = preg_replace("/\(.*\)/", "", $dbType);
         if ($dbType == 'int') {
             $type = 'integer';
         }

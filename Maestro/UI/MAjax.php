@@ -81,10 +81,6 @@ class MAjax extends MBase
                 break;
 
             case 'JSON':
-                $header = 'Content-type: application/json; ';
-                header($header . 'charset=' . $charset);
-                return $this->getData();
-                break;
             case 'OBJECT':
                 $data = MAjaxTransformer::toJSON($this);
                 //$header = 'Content-type: text/plain; ';
@@ -183,7 +179,7 @@ class MAjax extends MBase
 class MAjaxTransformer
 {
 
-    public static function toString($node)
+    static public function toString($node)
     {
         $returnValue = '';
         foreach ($node->composites as $composite) {
@@ -193,7 +189,7 @@ class MAjaxTransformer
         return $returnValue;
     }
 
-    public static function toXML($node)
+    static public function toXML($node)
     {
         $returnValue = '<' . $node->getName();
         // handle attributes
@@ -213,7 +209,7 @@ class MAjaxTransformer
         return $returnValue;
     }
 
-    public static function toJSON($node)
+    static public function toJSON($node)
     {
         $returnValue = '';
         $JSON_node = new \stdClass();
@@ -237,7 +233,7 @@ class MAjaxTransformer
         return $returnValue;
     }
 
-    public static function detectUTF8($string)
+    static public function detectUTF8($string)
     {
         return preg_match('%(?:
         [\xC2-\xDF][\x80-\xBF]        # non-overlong 2-byte
@@ -250,7 +246,7 @@ class MAjaxTransformer
         )+%xs', $string);
     }
 
-    public static function encode($data, $encoding)
+    static public function encode($data, $encoding)
     {
         if (MAjaxTransformer::detectUTF8($data)) {
             // if UTF-8 data was supplied everything is fine!
@@ -269,7 +265,7 @@ class MAjaxTransformer
         return $returnValue;
     }
 
-    public static function decode($data, $encoding)
+    static public function decode($data, $encoding)
     {
         // convert string
 
@@ -302,7 +298,7 @@ class MAjaxTransformer
      * @param    string    $encoding     character encoding
      * @return   array
      */
-    public static function decodeArray($data, $encoding)
+    static public function decodeArray($data, $encoding)
     {
         $returnValue = array();
 
@@ -311,7 +307,7 @@ class MAjaxTransformer
             if (!is_array($value)) {
                 $returnValue[$key] = MAjaxTransformer::decode($value, $encoding);
             } else {
-                $returnValue[$key] = MAjaxTransformer::decodeArray($value, $encoding);
+                $returnValue[$key] = MAjaxTransformer::decode_array($value, $encoding);
             }
         }
 
@@ -324,7 +320,7 @@ class MAjaxTransformer
      * @param    string    $encoding     character encoding
      * @return   string
      */
-    public static function findOutputCharset($encoding)
+    static public function findOutputCharset($encoding)
     {
         $returnValue = 'UTF-8';
         if (function_exists('iconv') || $encoding == 'UTF-8' || $encoding == 'ISO-8859-1') {

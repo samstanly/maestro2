@@ -134,6 +134,7 @@ class MHandler
         // se a execução não foi cancelada pelos filtros
         if ($this->canCallHandler()) {
             $this->invoke();
+
         }
         // executa o pos-processamento dos filtros indicados em conf.php
         foreach ($this->filters as $filter) {

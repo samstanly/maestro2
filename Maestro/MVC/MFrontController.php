@@ -19,11 +19,6 @@
 namespace Maestro\MVC;
 
 use Maestro\Manager;
-use Maestro\Services\Exception\ENotFoundException;
-use Maestro\Services\Exception\ESecurityException;
-use Maestro\Services\Exception\ETimeOutException;
-use Maestro\Services\Exception\ERuntimeException;
-use Maestro\Services\Exception\EMException;
 
 /**
  * Controla o processamento da requisição.
@@ -66,15 +61,15 @@ class MFrontController
                 self::$result = MApp::handler();
             } while (self::$forward != '');
             self::terminate();
-        } catch (ENotFoundException $e) {
+        } catch (\Maestro\Services\Exception\ENotFoundException $e) {
             self::$result = new Results\MNotFound($e);
-        } catch (ESecurityException $e) {
+        } catch (\Maestro\Services\Exception\ESecurityException $e) {
             self::$result = new Results\MInternalError($e);
-        } catch (ETimeOutException $e) {
+        } catch (\Maestro\Services\Exception\ETimeOutException $e) {
             self::$result = new Results\MInternalError($e);
-        } catch (ERuntimeException $e) {
+        } catch (\Maestro\Services\Exception\ERuntimeException $e) {
             self::$result = new Results\MRunTimeError($e);
-        } catch (EMException $e) {
+        } catch (\Maestro\Services\Exception\EMException $e) {
             self::$result = new Results\MInternalError($e);
         } catch (\Exception $e) {
             self::$result = new Results\MInternalError($e);
@@ -135,7 +130,7 @@ class MFrontController
 
     public static function getContext()
     {
-        return MApp::getContext();
+        return MApp::$context;
     }
 
     public static function getController()

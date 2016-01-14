@@ -17,58 +17,14 @@
  */
 namespace Maestro\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\Type;
 use Maestro\Manager;
-use Nette\NotImplementedException;
 
-abstract class MType
-{
-    const MCPF = 'mcpf';
-    const MDate = 'mdate';
-    const MPASSWORD = 'mpassword';
-    const MTIMESTAMP = 'mtimestamp';
-    /**
-     * @var array Maestro default Types mappings
-     */
-    private static $_MaestroTypesMap = array(
-        self::MCPF => 'Maestro\Types\MCPF',
-        self::MPASSWORD => 'Maestro\Types\MPassword',
-        self::MData => 'Maestro\Types\MDate',
-        self::MTIMESTAMP => 'Maestro\Types\MTimestamp'
-    );
+class MType {
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getType($name)
-    {
-        if(Type::hasType($name)) {
-            return Type::getType($name);
-        }else if(MType::hasType($name)){
-            return new MType::$_MaestroTypesMap[$name]();
-        }
-        return false;
+    public function __construct() {
+        
     }
 
-    public static function hasType($name){
-        if(Type::hasType($name)) {
-            return true;
-        }else{
-            if(self::$_MaestroTypesMap[$name]) {
-                Type::addType($name, self::$_MaestroTypesMap[$name]);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public abstract function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform);
-
-    public abstract function convertToPHPValue($value, AbstractPlatform $platform);
-
-    public abstract function convertToDatabaseValue($value, AbstractPlatform $platform);
-
-    public abstract function getName();
 }
 
+?>

@@ -112,6 +112,7 @@ function shutdown()
                 $ajax->setType('page');
                 $ajax->setData($ob);
             }
+
             $result = $ajax->returnData();
             echo $result;
         }

@@ -16,7 +16,7 @@
  */
 
 namespace Maestro\Database;
-use Maestro\Manager;
+
 
 class MSQLLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 
@@ -35,7 +35,7 @@ class MSQLLogger implements \Doctrine\DBAL\Logging\SQLLogger {
             }
             $log .= ']';
         }
-        Manager::getLog()->logSQL($sql . $log, $this->db);
+        \Manager::getLog()->logSQL($sql . $log, $this->db);
     }
 
     /**

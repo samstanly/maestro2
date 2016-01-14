@@ -38,13 +38,7 @@ class PersistentManager {
     private $locked = false;
     private $configLoader;
 
-    /**
-     * @param string $configLoader
-     * @return PersistentManager
-     */
-
-    public static function getInstance($configLoader='') {
-        $configLoader = $configLoader ?: Manager::getConf('db.configLoader');
+    public static function getInstance($configLoader = 'PHP') {
         if (self::$instance == NULL) {
             $manager = self::$instance = new PersistentManager();
             self::$container = Manager::getInstance();
@@ -54,17 +48,7 @@ class PersistentManager {
     }
 
     public function setConfigLoader($configLoader='PHP') {
-        switch($configLoader){
-            case 'PHP':
-                $this->configLoader = new PHPConfigLoader($this);
-                break;
-            case 'Annotation':
-                $this->configLoader = new AnnotationConfigLoader($this);
-                break;
-            case 'XML':
-                $this->configLoader = new XMLConfigLoader($this);
-                break;
-        };
+        $this->configLoader = ($configLoader == 'PHP') ? new PHPConfigLoader($this) : new XMLConfigLoader($this);
     }
 
     public function getConfigLoader() {
@@ -75,10 +59,6 @@ class PersistentManager {
         $this->classMaps[$name] = $classMap;
     }
 
-    /**
-     * @param $className string
-     * @return Manager/Persistence/Map/ClassMap
-     */
     public function getClassMap($className) {
         $classMap = $this->classMaps[$className];
         if (!$classMap) {
@@ -190,7 +170,7 @@ class PersistentManager {
     private function _retrieveAssociation(PersistentObject $object, $associationName, ClassMap $classMap) {
         $associationMap = $classMap->getAssociationMap($associationName);
         if (is_null($associationMap)) {
-            throw new EPersistenceException("Association name [{$associationName}] not found.");
+            throw new EPersistentManagerException("Association name [{$associationName}] not found.");
         }
         $this->__retrieveAssociation($object, $associationMap, $classMap);
     }
@@ -236,7 +216,7 @@ class PersistentManager {
      * Save Object
      *
      */
-    public function saveObject(Maestro\MVC\MBusinessModel $object) {
+    public function saveObject(PersistentObject $object) {
         $object->validate();
         $classMap = $object->getClassMap();
         $commands = array();
