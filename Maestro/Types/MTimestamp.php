@@ -56,11 +56,6 @@ class MTimestamp extends MDate
         return $value->format('Y-m-d H:i:s');
     }
 
-    public function getName()
-    {
-        return 'timestamp';
-    }
-
 }
 
 ?>

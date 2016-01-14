@@ -265,11 +265,6 @@ class MDate extends MType
     {
         return $value->format('Y-m-d');
     }
-
-    public function getName()
-    {
-        return 'date';
-    }
 }
 
 ?>

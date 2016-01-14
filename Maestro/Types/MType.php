@@ -57,5 +57,7 @@ abstract class MType
 
     public abstract function convertToDatabaseValue($value, AbstractPlatform $platform);
 
-    public abstract function getName();
+    public function getName(){
+        return get_class($this);
+    }
 }

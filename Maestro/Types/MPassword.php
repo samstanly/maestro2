@@ -30,9 +30,4 @@ class MPassword extends MType
     {
         return md5($value);
     }
-
-    public function getName()
-    {
-        return 'password';
-    }
 }

@@ -47,11 +47,6 @@ class MCPF extends MType
         return MCPF::getPlainValue($value);
     }
 
-    public function getName()
-    {
-        return self::MCPF;
-    }
-
     /**
      * Valor plano (sem pontuação) do CPF
      * @var string
