@@ -84,12 +84,7 @@ class MTrace
             $message .= " [file: $file] [line: $line]";
         }
         $this->trace[] = $message;
-        $tag = Manager::getConf('logs')['tag'];
-        if (strlen($tag) > 0) {
-            $this->logger->logMessage('[' . $tag . ']' . $message);
-        } else {
-            $this->logger->logMessage('[CUSTOM]' . $message);
-        }
+        $this->logger->logMessage('[CUSTOM]' . $message);
     }
 
     public function traceStack($file = '', $line = 0)

@@ -131,17 +131,8 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatfo
 
     public function convertToDatabaseValue($value, $type)
     {
-        if($type == 'string' || $type == 'integer'){
-            return $value;
-        }
-        if(!class_exists($type)){ //Procura "mcpf" ou "datetime
-            $type .= "Type";
-            if(!class_exists($type)){ //Procura "mcpftype" ou "datetimetype"
-                return $value; //Não requer tratamento
-            }
-        }
-        $obj = new $type();
-        if ($obj instanceof Type) {
+        if(\Maestro\Types\MType::hasType($type)){
+            $obj = \Maestro\Types\MType::getType($type);
             $value = $obj->convertToDatabaseValue($value, $this);
         }
         return $value;
@@ -178,11 +169,8 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform implements MPlatfo
 
     public function convertToPHPValue($value, $type)
     {
-        if(!\Maestro\Types\MType::getType($type)){ //Procura "mcpf" ou "datetime
-            return $value; //Não requer tratamento
-        }
-        $obj = new $type();
-        if ($obj instanceof Type) {
+        if(\Maestro\Types\MType::hasType($type)){
+            $obj = \Maestro\Types\MType::getType($type);
             $value = $obj->convertToPHPValue($value, $this);
         }
         return $value;
