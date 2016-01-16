@@ -118,7 +118,7 @@ class MDate extends MType
 
     public function __construct($datetime = NULL, $format = '')
     {
-        parent::__construct();
+        //parent::__construct();
         $this->separator = Manager::getOptions('separatorDate');
         $this->format = ($format ? : Manager::getOptions('formatDate'));
         $this->datetime = MKrono::getDateTime($datetime, $this->format);

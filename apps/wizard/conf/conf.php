@@ -49,6 +49,22 @@ return array(
             'formatTime' => 'HH24:MI:SS',
             'configurationClass' => 'Doctrine\DBAL\Configuration',
         ),
+        'kancolle' => array(
+            'charset' => 'UTF8',
+            'driver' => 'pdo_mysql',
+            'dbname' => 'library',
+            'host' => '127.0.0.1',
+            'user' => 'root',
+            'password' => '0',
+            'formatDate' => 'DD/MM/YYYY',
+            'formatTime' => 'HH24:MI:SS',
+            'configurationClass' => 'Doctrine\DBAL\Configuration',
+            'sequence' => array(
+                'table' => 'Sequence',
+                'name' => 'name',
+                'value' => 'value'
+            ),
+        ),
 
         
     ),
