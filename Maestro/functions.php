@@ -103,12 +103,10 @@ function mrequest($vars, $from = 'ALL', $order = '')
 function shutdown()
 {
     $error = error_get_last();
-    mdump('************* shutdown !!');
-    mdump($error);
     /*
      * TODO: handler this error message
      */
-    if ($error['type'] & (E_ALL & ~E_NOTICE & ~E_STRICT)) {
+    if ($error['type'] & (Maestro\Manager::getConf('debug.severity'))) {
         if (Maestro\Manager::isAjaxCall()) {
             $ajax = Maestro\Manager::getAjax();
             $ob = ob_get_clean();
@@ -116,7 +114,6 @@ function shutdown()
                 $ajax->setType('page');
                 $ajax->setData($ob);
             }
-
             $result = $ajax->returnData();
             echo $result;
         }

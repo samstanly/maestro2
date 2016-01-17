@@ -335,12 +335,12 @@ class Manager extends Nette\Object
         if ($debug) {
             $mode = self::getConf('options.mode') == 'DEV' ? Tracy\Debugger::DEVELOPMENT : Tracy\Debugger::PRODUCTION;
             Tracy\Debugger::enable($mode, self::$basePath . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log');
-            error_reporting(self::getConf('debug.severity'));
             Tracy\Debugger::$logSeverity = self::getConf('debug.severity');
             Tracy\Debugger::$strictMode = self::getConf('debug.strictMode');
             Tracy\Debugger::$maxDepth = self::getConf('debug.maxDepth'); // default: 3
             Tracy\Debugger::$maxLen = self::getConf('debug.maxLen'); // default: 150            
         }
+        error_reporting(self::getConf('debug.severity'));
         self::$request = new MRequest;
         self::$response = new MResponse;
         // Maestro 1.0 compatibility
