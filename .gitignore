@@ -1,5 +1,6 @@
 vendor
 composer.lock
+.svn
 
 #Don't show apps as Maestro changes
 apps/*

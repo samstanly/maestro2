@@ -35,6 +35,7 @@ class MAction {
      * dialog:id                Exibe o dialog indicado por div#id
      * prompt:id                Exibe o prompt indicado por div#id
      * help:id                  Abre o dialogo de help indicado por div#id
+     * file:url                 Download de arquivo via AJAX usando plugin
      * POST                     POST do formulário atual
      * SUBMIT                   POST na URL corrente
      * PRINT, PDF, REPORT 	Abre nova janela do browser
@@ -45,7 +46,7 @@ class MAction {
     public static function isAction($string) {
         return  ($string != '') && 
             ((strpos(self::$modifiers, $string{0}) !== false) || 
-                preg_match("/^(SUBMIT|PRINT|PDF|FILE|REPORT|POST|OPEN(.*)|CLOSE|PROMPT(.*)|DIALOG(.*)|HELP(.*))$/", strtoupper($string)));
+                preg_match("/^(SUBMIT|PRINT|PDF|FILE|REPORT|POST|OPEN(.*)|CLOSE|PROMPT(.*)|DIALOG(.*)|HELP(.*)|FILE(.*))$/", strtoupper($string)));
     }
 
     private static function getHrefAction($href) {
@@ -107,6 +108,12 @@ class MAction {
             if (strpos($action, ':') !== false) {
                 list($action, $id) = explode(':', $action);
                 return "d#" . $id;
+            }
+            return '';
+        } elseif (substr($upper, 0, 4) == 'FILE') {
+            if (strpos($action, ':') !== false) {
+                list($action, $url) = explode(':', $action);
+                return "f#" . self::getAction($url);
             }
             return '';
         } else {

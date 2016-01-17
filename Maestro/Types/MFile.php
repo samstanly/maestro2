@@ -17,11 +17,12 @@
 namespace Maestro\Types;
 
 use Maestro\Manager;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 class MFile extends MType {
 
     private $name;
-    private $type;
+    private $mimetype;
     private $tmpName;
     private $error;
     private $size;
@@ -34,10 +35,9 @@ class MFile extends MType {
      * @param <type> $file => $_FILES[i]
      */
     public function __construct($file, $inline = true) {
-        parent::__construct();
         if (is_array($file)) {
             $this->name = $file['name'];
-            $this->type = $file['type'];
+            $this->mimetype = $file['type'];
             $this->tmpName = $file['tmp_name'];
             $this->error = $file['error'];
             $this->size = $file['size'];
@@ -48,11 +48,11 @@ class MFile extends MType {
         }
     }
 
-    public static function file($value, $inline = true, $name = '') {
+    public static function file($value, $inline = true, $name = '', $overwrite = true) {
         $size = strlen($value);
         $instance = new MFile(array('size' => $size));
         $instance->setValue($value);
-        $instance->saveToCache($inline, $name);
+        $instance->saveToCache($inline, $name, $overwrite);
         return $instance;
     }
 
@@ -65,6 +65,29 @@ class MFile extends MType {
         return new MFile($file);
     }
 
+    /*
+     * Convert methods to database (blob ?) 
+     */
+    
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        return null;
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        return null;
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        return null;
+    }    
+    
+    /*
+     * 
+     */
+    
     public function copyTo($file) {
         if ($f = $this->tmpName) {
             copy($f, $file);
@@ -75,10 +98,10 @@ class MFile extends MType {
         }
     }
 
-    public function saveToCache($inline = true, $name = '') {
+    public function saveToCache($inline = true, $name = '', $overwrite = false) {
         $this->name = $name ?: md5($this->value);
         $file = \Manager::getFilesPath($this->name);
-        if (!file_exists($file)) {
+        if ((!file_exists($file) || $overwrite)) {
             $this->saveTo($file);
         }
         $this->setPath($file, $inline);
@@ -101,8 +124,8 @@ class MFile extends MType {
         return $this->name;
     }
 
-    public function getType() {
-        return $this->type;
+    public function getMimeType() {
+        return $this->mimetype;
     }
 
     public function getSize() {

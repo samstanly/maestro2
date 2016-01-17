@@ -239,7 +239,7 @@ class MHandler
     }
 
 
-    public function renderFile(\Manager\Types\MFile $file)
+    public function renderFile(\Maestro\Types\MFile $file)
     {
         Manager::getPage()->window($file->getURL());
         $this->setResult(new Results\MBrowserFile($file));

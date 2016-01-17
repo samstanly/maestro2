@@ -183,6 +183,8 @@ class MResponse extends \Nette\Http\Response
                 $this->_setContentLength();
                 header('Expires: 0');
                 header('Pragma: public');
+                header('Set-Cookie: fileDownload=true; path=/');
+                header('Cache-Control: max-age=60, must-revalidate');                
                 header("Content-Type: " . $this->contentType);
                 header("Content-Length: " . filesize($filePath));
                 if ($result->getInline()) {
@@ -190,7 +192,7 @@ class MResponse extends \Nette\Http\Response
                 } else {
                     header("Content-Disposition: attachment; filename=" . $fileName);
                 }
-                header("Cache-Control: cache"); // HTTP/1.1 
+                //header("Cache-Control: cache"); // HTTP/1.1 
                 header("Content-Transfer-Encoding: binary");
 
                 $fp = fopen($filePath, "r");
@@ -211,7 +213,7 @@ class MResponse extends \Nette\Http\Response
                 } else {
                     header("Content-Disposition: attachment; filename=" . $fileName);
                 }
-                header("Cache-Control: cache"); // HTTP/1.1 
+                //header("Cache-Control: cache"); // HTTP/1.1 
                 header("Content-Transfer-Encoding: binary");
             }
             echo $stream;

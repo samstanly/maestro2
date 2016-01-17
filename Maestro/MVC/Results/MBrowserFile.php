@@ -25,6 +25,8 @@ class MBrowserFile extends MResultObject
 
     public function setContent()
     {
+        mtrace('Executing MBrowserFile');
+        $this->ajax->setResponseType('JSON');
         if ($this->ajax->isEmpty()) {
             $this->ajax->setId($this->object->getName());
             $this->ajax->setType('file');

@@ -103,7 +103,11 @@ function mrequest($vars, $from = 'ALL', $order = '')
 function shutdown()
 {
     $error = error_get_last();
-    //Maestro\Manager::errorHandler($error['type'], $error['message'], $error['file'], $error['line']);
+    mdump('************* shutdown !!');
+    mdump($error);
+    /*
+     * TODO: handler this error message
+     */
     if ($error['type'] & (E_ALL & ~E_NOTICE & ~E_STRICT)) {
         if (Maestro\Manager::isAjaxCall()) {
             $ajax = Maestro\Manager::getAjax();
