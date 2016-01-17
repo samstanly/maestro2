@@ -318,11 +318,11 @@ class Manager extends Nette\Object
     {
         self::$basePath = $basePath;
         self::$appsPath = $basePath . DIRECTORY_SEPARATOR . 'apps';
-        self::$coreAppsPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'apps';
+        self::$coreAppsPath = $basePath . DIRECTORY_SEPARATOR . 'apps';
         self::$app = $app;
-        self::$confPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'conf';
+        self::$confPath = $basePath . DIRECTORY_SEPARATOR . 'conf';
         self::$publicPath = $basePath . DIRECTORY_SEPARATOR . 'public';
-        self::$classPath = $basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'classes';
+        self::$classPath = $basePath . DIRECTORY_SEPARATOR . 'Maestro';
         // Carrega configurações 
         $managerConfigFile = self::$confPath . DIRECTORY_SEPARATOR . 'conf.php';
         self::loadConf($managerConfigFile);
@@ -334,7 +334,7 @@ class Manager extends Nette\Object
         $debug = self::getConf('debug.enabled');
         if ($debug) {
             $mode = self::getConf('options.mode') == 'DEV' ? Tracy\Debugger::DEVELOPMENT : Tracy\Debugger::PRODUCTION;
-            Tracy\Debugger::enable($mode, self::$basePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log');
+            Tracy\Debugger::enable($mode, self::$basePath . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log');
             error_reporting(self::getConf('debug.severity'));
             Tracy\Debugger::$logSeverity = self::getConf('debug.severity');
             Tracy\Debugger::$strictMode = self::getConf('debug.strictMode');
@@ -489,7 +489,7 @@ class Manager extends Nette\Object
      */
     public static function getFrameworkPath($file = '')
     {
-        return self::getPath(self::getHome() . '/core', $file);
+        return self::getPath(self::getHome(), $file);
     }
 
     /**
@@ -501,7 +501,7 @@ class Manager extends Nette\Object
      */
     public static function getFilesPath($fileName = '', $session = false)
     {
-        $path = self::getHome() . '/core/var/files';
+        $path = self::getHome() . '/var/files';
         if ($fileName != '') {
             if ($session) {
                 $sid = self::getSession()->getId();
@@ -1159,7 +1159,7 @@ class Manager extends Nette\Object
 
     public static function getDownloadURL($controller = '', $file = '', $inline = false, $absolute = true)
     {
-        return self::getAppURL('core/download', $controller . '/' . ($inline ? 'inline' : 'save') . '/' . $file, $absolute);
+        return self::getAppURL('download', $controller . '/' . ($inline ? 'inline' : 'save') . '/' . $file, $absolute);
     }
 
     public static function getURL($action = 'main/main', $args = array())
