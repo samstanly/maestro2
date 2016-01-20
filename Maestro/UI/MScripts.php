@@ -159,14 +159,17 @@ class MScripts extends MBase
 
         $scripts = new \StdClass;
 
+        $scripts->scripts = "";
         foreach ($this->scripts as $key => $url) {
             $scripts->scripts .= "\n manager.loader.load('{$url}');";
         }
 
+        $scripts->code = "";
         foreach ($this->jsCode as $key => $code) {
             $scripts->code .= "\n {$code}";
         }
 
+        $scripts->onload = "";
         foreach ($this->onload as $key => $code) {
             $scripts->onload .= "\n {$code}";
         }

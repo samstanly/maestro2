@@ -27,7 +27,7 @@ class MTimestamp extends MDate
 
     public function __construct($datetime = NULL, $format = '')
     {
-        parent::__construct($datetime, ($format ? : Manager::getOptions('formatTimestamp')));
+        parent::__construct($datetime, ($format ?: Manager::getOptions('formatTimestamp')));
     }
 
     public static function getSysTime($format = 'd/m/Y H:i:s')
@@ -53,7 +53,12 @@ class MTimestamp extends MDate
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return $value->format('Y-m-d H:i:s');
+        if ($value != null) {
+            return $value->format('Y-m-d H:i:s');
+        } else {
+            return null;
+        }
+
     }
 
 }
